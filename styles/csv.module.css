@@ -1,0 +1,20 @@
+.main {
+  padding: 8rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input {
+  margin: 2px;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.btnContainer > * {
+  margin: 0 10px;
+}
