@@ -10,21 +10,58 @@ import dayjs from "dayjs";
 const Csv = ({ data, token, label }) => {
   const router = useRouter();
   const [csvData, setCsvData] = useState();
+  const [originalCsvData, setOriginalCsvData] = useState();
   const [update, setUpdated] = useState(false);
   const [csvString, setCsvString] = useState("");
   const [saving, setSaving] = useState(false);
   const [newId, setNewId] = useState(0);
   const [success, setSuccess] = useState();
+  const [addEnabled, setAddEnabled] = useState(false);
+  const [removeEnabled, setRemoveEnabled] = useState(false);
 
   useEffect(() => {
     readString(data, {
       worker: true,
       complete: (results) => {
         setCsvData(results.data);
+        setOriginalCsvData(results.data);
         setCsvString(jsonToCSV(JSON.stringify(results.data)));
       },
     });
+
+    const pagesThatNeedAddRow = [
+      "archivos_hypothetical-10k-growth",
+      "archivos_nav-price-evolution",
+      "archivos_portfolio-credit-quality",
+    ];
+    const pagesThatNeedDeleteBtn = ["archivos_portfolio-credit-quality"];
+    if (pagesThatNeedAddRow.includes(label)) {
+      setAddEnabled(true);
+    }
+    if (pagesThatNeedDeleteBtn.includes(label)) {
+      setRemoveEnabled(true);
+    }
   }, []);
+
+  const removeRow = (rowNum) => {
+    const arrData = csvData.filter((row, i) => {
+      if (i !== rowNum) {
+        return row;
+      }
+    });
+    setCsvData(arrData);
+  };
+
+  const removeBtn = (x) => (
+    <div
+      className={styles.removeContainer}
+      onClick={() => {
+        removeRow(x);
+      }}
+    >
+      X
+    </div>
+  );
 
   let csvTable;
   //Create a MATRIX in order to modify the values
@@ -47,6 +84,7 @@ const Csv = ({ data, token, label }) => {
               />
             );
           })}
+          {i !== 0 && setRemoveEnabled && removeBtn(i)}
         </div>
       );
     });
@@ -82,7 +120,7 @@ const Csv = ({ data, token, label }) => {
         setSaving(false);
         axios
           .post(
-            "https://azimuthim.com/wp-json/acf/v3/pages/415",
+            "https://azimuthim.com/wp-json/acf/v3/pages/431",
             {
               fields: {
                 [label]: {
@@ -103,14 +141,47 @@ const Csv = ({ data, token, label }) => {
       .catch((x) => console.log(x));
   };
 
+  const addNewRow = () => {
+    let newRow = csvData[0];
+    newRow = newRow.map((v) => "");
+    setCsvData([...csvData, newRow]);
+  };
+
+  const addRow = (
+    <div className={styles.addRow}>
+      Agregar fila{" "}
+      <span style={{ width: "50px" }}>
+        <Button color="success" shadow auto onClick={addNewRow}>
+          +
+        </Button>
+      </span>
+    </div>
+  );
+
   return (
     <div className={styles.main}>
       <Text h2>Archivo: {label}</Text>
       <br />
-      {!csvData ? <Loading>Cargando</Loading> : csvTable}
+      {!csvData ? (
+        <Loading>Cargando</Loading>
+      ) : (
+        <div className={styles.tableContainer}>{csvTable}</div>
+      )}
       <br />
-      <br />
+      {addEnabled && addRow}
+
       <div className={styles.btnContainer}>
+        <div className={styles.dataBtn}>
+          <Button
+            shadow
+            color="warning"
+            onClick={() => {
+              setCsvData(originalCsvData);
+            }}
+          >
+            Restablecer Data
+          </Button>
+        </div>
         <Button onClick={() => router.push("/")} shadow color="primary" auto>
           Volver
         </Button>
