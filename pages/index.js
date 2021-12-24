@@ -82,7 +82,7 @@ const Index = (props) => {
     <div className={styles.main}>
       <header className={styles.header}>
         <Text h1>Azi Tool</Text>
-        <Text p>Una herramienta para editar los csv's del sitio</Text>
+        <Text p>Una herramienta para editar los csvs del sitio</Text>
         <hr />
         <div className={styles.switchContainer}>
           <select onChange={(e) => changePage(e)} value={pageSelected}>
