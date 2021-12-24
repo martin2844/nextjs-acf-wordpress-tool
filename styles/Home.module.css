@@ -6,6 +6,29 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.header {
+  padding: 2rem 8rem;
+  background-color: #efefef;
+}
+
+.switchContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.switchOn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.switchOn span {
+  margin-right: 15px;
+}
+
+.files {
   padding: 2rem 8rem;
 }
 

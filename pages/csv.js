@@ -7,7 +7,7 @@ import { Loading, Button, Text } from "@nextui-org/react";
 import styles from "../styles/csv.module.css";
 import dayjs from "dayjs";
 
-const Csv = ({ data, token, label }) => {
+const Csv = ({ data, token, label, updateUrl }) => {
   const router = useRouter();
   const [csvData, setCsvData] = useState();
   const [originalCsvData, setOriginalCsvData] = useState();
@@ -116,11 +116,11 @@ const Csv = ({ data, token, label }) => {
       .post(`https://azimuthim.com/wp-json/wp/v2/media`, formData, config)
       .then((x) => {
         //Success Uploading
-        console.log(x.data.id);
+        console.log("New File Id:", x.data.id);
         setSaving(false);
         axios
           .post(
-            "https://azimuthim.com/wp-json/acf/v3/pages/431",
+            updateUrl,
             {
               fields: {
                 [label]: {
@@ -217,6 +217,7 @@ export async function getServerSideProps(context) {
       data: csvString.data,
       token: token.data.data.token,
       label: context.query.label,
+      updateUrl: context.query.updateUrl,
     },
   };
 }
