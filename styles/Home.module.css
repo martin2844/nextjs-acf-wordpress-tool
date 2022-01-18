@@ -13,6 +13,11 @@
   background-color: #efefef;
 }
 
+.subHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
 .switchContainer {
   display: flex;
   justify-content: space-between;

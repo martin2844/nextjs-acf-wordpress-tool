@@ -204,6 +204,11 @@ export default Csv;
 export async function getServerSideProps(context) {
   // Id need to get the URL from context.
   //And replace the String below with that.
+  console.log(process.env.localPass);
+  console.log(context.query.pass);
+  if (context.query.pass !== process.env.localPass) {
+    throw new Error("WRONG PASSWORD");
+  }
   const csvString = await axios.get(context.query.file);
   const token = await axios.post(
     "https://azimuthim.com/wp-json/jwt-auth/v1/token",
