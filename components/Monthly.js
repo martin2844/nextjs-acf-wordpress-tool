@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import styles from "../styles/month.module.css";
 import axios from "axios";
-import { Loading, Button, Text } from "@nextui-org/react";
-import { readString, jsonToCSV } from "react-papaparse";
+import { useRouter } from "next/router";
+import { Loading, Button } from "@nextui-org/react";
 
 const Monthly = ({ token, file }) => {
   const [lastMonths, setLastMonths] = useState([]);
@@ -11,12 +11,15 @@ const Monthly = ({ token, file }) => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const today = dayjs(new Date());
-
+  const router = useRouter();
   useEffect(() => {
     //On first load first search for all files and check if there is a monthly file available.
     if (file) {
+      console.log("@@@@@@@@ FILE LOADED OK @@@@@@@@@");
       setLastMonths(file);
     } else {
+      console.log("@@@@@@@@ No file loaded @@@@@@@@@");
+      console.log("TOKEN: ", token);
       const last12Months = [];
       for (let i = 0; i < 12; i++) {
         let dateToPush = dayjs(today).subtract(i, "month");

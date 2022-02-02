@@ -1,13 +1,10 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { Loading, Button, Text } from "@nextui-org/react";
+import { Text } from "@nextui-org/react";
 import styles from "../styles/csv.module.css";
 import Monthly from "../components/Monthly";
 import axios from "axios";
 
 const Charts = ({ name, token, monthlyFile }) => {
-  const router = useRouter();
-
   return (
     <div className={styles.main}>
       <section>
