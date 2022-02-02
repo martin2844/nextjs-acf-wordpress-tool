@@ -37,6 +37,11 @@
   padding: 2rem 8rem;
 }
 
+.extras {
+  padding: 2rem 8rem;
+  background-color: #efefef;
+}
+
 .footer {
   display: flex;
   flex: 1;

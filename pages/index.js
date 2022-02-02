@@ -125,6 +125,15 @@ const Index = (props) => {
         </div>
       </header>
       <section className={styles.files}>{listJsx}</section>
+      <section className={styles.extras}>
+        <Text h1>Gráficos</Text>
+        <div>
+          Editar:
+          <Link block href={`/charts?pass=${pass}&chart=monthly`}>
+            Monthly
+          </Link>
+        </div>
+      </section>
 
       {/* <pre>
         <code>{JSON.stringify(props, null, 4)}</code>

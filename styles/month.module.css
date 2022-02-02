@@ -1,0 +1,26 @@
+.parent {
+  margin-bottom: 40px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: row;
+  max-width: 400px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.inputs {
+  margin-right: 20px;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clarify {
+  margin-bottom: 20px;
+  font-weight: bold;
+}

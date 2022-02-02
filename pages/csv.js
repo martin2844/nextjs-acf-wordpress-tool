@@ -43,6 +43,9 @@ const Csv = ({ data, token, label, updateUrl }) => {
     }
   }, []);
 
+  console.log("CSVDATA:", csvData);
+  console.log("CSVSTRING:", csvString);
+
   const removeRow = (rowNum) => {
     const arrData = csvData.filter((row, i) => {
       if (i !== rowNum) {
