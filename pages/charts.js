@@ -26,7 +26,6 @@ const Charts = ({ name, token, monthlyFile, error }) => {
 export default Charts;
 
 export async function getServerSideProps(context) {
-  try {
     // Id need to get the URL from context.
     //And replace the String below with that.
     if (context.query.pass !== process.env.localPass) {
@@ -66,19 +65,7 @@ export async function getServerSideProps(context) {
         ok: true,
         name: context.query.chart,
         token: token.data.data.token,
-        monthlyFile,
+        monthlyFile: monthlyFile,
       },
     };
-  } catch (error) {
-    console.log(error);
-    return {
-      props: {
-        ok: true,
-        name: context.query.chart,
-        token: "",
-        monthlyFile: "",
-        error: error
-      },
-    };
-  }
 }
