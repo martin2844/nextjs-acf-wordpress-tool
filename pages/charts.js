@@ -4,7 +4,12 @@ import styles from "../styles/csv.module.css";
 import Monthly from "../components/Monthly";
 import axios from "axios";
 
-const Charts = ({ name, token, monthlyFile }) => {
+const Charts = ({ name, token, monthlyFile, error }) => {
+
+  if(error) {
+      console.log(error);
+  }
+
   return (
     <div className={styles.main}>
       <section>
@@ -72,6 +77,7 @@ export async function getServerSideProps(context) {
         name: context.query.chart,
         token: "",
         monthlyFile: "",
+        error: error
       },
     };
   }
