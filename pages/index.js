@@ -12,6 +12,7 @@ const Index = (props) => {
   const [newPass, setNewPass] = useState("");
   const [pass, setPass] = useSavePassToLocalStorage();
   const [listJsx, setListJsx] = useState("");
+  const [chartJsx, setChartJsx] = useState("");
   const [visible, setVisible] = useState(false);
   const [pageSelected, setPageSelected] = useState("home");
   const [production, isProduction] = useState(false);
@@ -91,6 +92,15 @@ const Index = (props) => {
         );
       })
     );
+
+    setChartJsx(
+      <>
+        Editar:
+        <Link block href={`/charts?pass=${pass}&chart=monthly`}>
+          Monthly
+        </Link>
+      </>
+    );
   }, [pass]);
 
   return (
@@ -127,12 +137,7 @@ const Index = (props) => {
       <section className={styles.files}>{listJsx}</section>
       <section className={styles.extras}>
         <Text h1>Gráficos</Text>
-        <div>
-          Editar:
-          <Link block href={`/charts?pass=${pass}&chart=monthly`}>
-            Monthly
-          </Link>
-        </div>
+        <div>{chartJsx}</div>
       </section>
 
       {/* <pre>
