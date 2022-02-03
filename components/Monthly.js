@@ -30,6 +30,16 @@ const Monthly = ({ token, file }) => {
     }
   }, []);
 
+  const addMonth = () => {
+    const newMonths = [...lastMonths];
+    newMonths.pop();
+    const latestMonthInArr = dayjs("01" + newMonths[0][0]);
+    newMonths.unshift([latestMonthInArr.add(1, "month").format("MMM-YY"), "0"]);
+    setLastMonths(newMonths);
+  };
+
+  console.log(lastMonths);
+
   let csvTable;
   //Create a MATRIX in order to modify the values
   //First array determines the amount of rows
@@ -101,6 +111,18 @@ const Monthly = ({ token, file }) => {
         ) : (
           <div className={styles.tableContainer}>{csvTable}</div>
         )}
+
+        <Button
+          onClick={() => {
+            addMonth();
+          }}
+          shadow
+          color="success"
+          auto
+        >
+          Agregar Mes
+        </Button>
+
         <section
           style={{
             minWidth: "200px",

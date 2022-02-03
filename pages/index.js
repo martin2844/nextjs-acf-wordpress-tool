@@ -10,6 +10,7 @@ import { useSavePassToLocalStorage } from "../hook/savePass";
 const Index = (props) => {
   const router = useRouter();
   const [newPass, setNewPass] = useState("");
+  const [loading, setLoading] = useState(true);
   const [pass, setPass] = useSavePassToLocalStorage();
   const [listJsx, setListJsx] = useState("");
   const [chartJsx, setChartJsx] = useState("");
@@ -29,6 +30,13 @@ const Index = (props) => {
         case "home":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/7");
           break;
+        case "homeA":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/97");
+          break;
+        case "homeSP":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/477");
+        case "homeASP":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/127");
         default:
           break;
       }
@@ -37,6 +45,13 @@ const Index = (props) => {
         case "home":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/431");
           break;
+        case "homeA":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/483");
+          break;
+        case "homeSP":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/123");
+        case "homeASP":
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/478");
         default:
           break;
       }
@@ -44,6 +59,8 @@ const Index = (props) => {
   }, [production, pageSelected]);
 
   useEffect(() => {
+    console.log("FETCHING DATA");
+    setLoading(true);
     axios.post("/api/getData", { url: updateUrl }).then((data) => {
       const keys = Object.keys(data.data.acf);
       //Filter keys to only keys that have a csv file
@@ -57,8 +74,11 @@ const Index = (props) => {
       });
       setRawData(fileBlocks);
       setListData(Object.keys(fileBlocks));
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
     });
-  }, [updateUrl]);
+  }, [updateUrl, pageSelected]);
 
   const changePage = (e) => {
     setPageSelected(e.target.value);
@@ -69,39 +89,62 @@ const Index = (props) => {
     setVisible(false);
   };
 
-  console.log("PASS", pass);
+  // console.log("PASS", pass);
+  // console.log(rawData)
 
   useEffect(() => {
-    setListJsx(
-      listData?.map((link, i) => {
-        // console.log(link);
-        // console.log(listData);
-        return (
-          <div key={i}>
-            <div>
-              Editar:
-              <Link
-                block
-                href={`/csv?pass=${pass}&file=${rawData[link]?.url}&label=${link}&updateUrl=${updateUrl}`}
-              >
-                {link}
-              </Link>
+    if (loading) {
+      setListJsx(
+        <Text h1 size={60} color="success" weight="bold">
+          Cargando...
+        </Text>
+      );
+      setChartJsx(
+        <Text h1 size={60} color="success" weight="bold">
+          Cargando...
+        </Text>
+      );
+    } else {
+      setListJsx(
+        listData?.map((link, i) => {
+          // console.log(link);
+          // console.log(listData);
+          // console.log(rawData[link]?.url)
+          return (
+            <div key={i}>
+              <div>
+                Editar:
+                <Link
+                  block
+                  href={`/csv?pass=${pass}&file=${rawData[link]?.url}&label=${link}&updateUrl=${updateUrl}`}
+                >
+                  {link} -{" "}
+                  <span style={{ color: "red" }}>
+                    [
+                    {rawData[link]?.url.substr(
+                      rawData[link]?.url.lastIndexOf("/") + 1,
+                      rawData[link]?.url.length
+                    )}
+                    ]
+                  </span>
+                </Link>
+              </div>
+              <Spacer />
             </div>
-            <Spacer />
-          </div>
-        );
-      })
-    );
+          );
+        })
+      );
 
-    setChartJsx(
-      <>
-        Editar:
-        <Link block href={`/charts?pass=${pass}&chart=monthly`}>
-          Monthly
-        </Link>
-      </>
-    );
-  }, [pass]);
+      setChartJsx(
+        <>
+          Editar:
+          <Link block href={`/charts?pass=${pass}&chart=monthly`}>
+            Monthly
+          </Link>
+        </>
+      );
+    }
+  }, [pass, rawData, loading]);
 
   return (
     <div className={styles.main}>
@@ -120,9 +163,12 @@ const Index = (props) => {
         <hr />
         <div className={styles.switchContainer}>
           <select onChange={(e) => changePage(e)} value={pageSelected}>
-            <option value="home">Home - Spanish</option>
-            <option value="home2">Home - English</option>
+            <option value="home">Home B - English</option>
+            <option value="homeSP">Home B - Spanish</option>
+            <option value="homeA">Home A - English</option>
+            <option value="homeASP">Home A- Spanish</option>
           </select>
+          <div>{updateUrl}</div>
           <div className={styles.switchOn}>
             <span>Produccion</span>
             <Switch
@@ -136,7 +182,7 @@ const Index = (props) => {
       </header>
       <section className={styles.files}>{listJsx}</section>
       <section className={styles.extras}>
-        <Text h1>Gráficos</Text>
+        <Text h1>Gráficos JS</Text>
         <div>{chartJsx}</div>
       </section>
 
