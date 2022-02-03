@@ -18,8 +18,9 @@ const Index = (props) => {
   const [pageSelected, setPageSelected] = useState("home");
   const [production, isProduction] = useState(false);
   const [updateUrl, setUpdateUrl] = useState(
-    "https://azimuthim.com/wp-json/acf/v3/pages/431"
+    "https://azimuthim.com/wp-json/acf/v3/pages/486"
   );
+  const [viewUrl, setViewUrl] = useState("https://azimuthim.com/home-copy/");
   const [listData, setListData] = useState(Object.keys(props));
   const [rawData, setRawData] = useState(props);
 
@@ -29,29 +30,37 @@ const Index = (props) => {
       switch (pageSelected) {
         case "home":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/7");
+          setViewUrl("https://azimuthim.com/");
           break;
         case "homeA":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/97");
+          setViewUrl("https://azimuthim.com/a/");
           break;
         case "homeSP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/477");
+          setViewUrl("https://azimuthim.com/es/");
         case "homeASP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/127");
+          setViewUrl("https://azimuthim.com/a-2/");
         default:
           break;
       }
     } else {
       switch (pageSelected) {
         case "home":
-          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/431");
+          setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/486");
+          setViewUrl("https://azimuthim.com/home-copy/");
           break;
         case "homeA":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/483");
+          setViewUrl("https://azimuthim.com/a-copia-eng/");
           break;
         case "homeSP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/123");
+          setViewUrl("https://azimuthim.com/es/pagina-principal/");
         case "homeASP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/478");
+          setViewUrl("https://azimuthim.com/a-copia-esp/");
         default:
           break;
       }
@@ -168,7 +177,14 @@ const Index = (props) => {
             <option value="homeA">Home A - English</option>
             <option value="homeASP">Home A- Spanish</option>
           </select>
-          <div>{updateUrl}</div>
+          <div>
+            <span style={{ fontWeight: "bold", marginRight: "8px" }}>
+              Editando:
+            </span>
+            <a href={viewUrl} target="_blank">
+              {viewUrl}
+            </a>
+          </div>
           <div className={styles.switchOn}>
             <span>Produccion</span>
             <Switch
