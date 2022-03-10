@@ -181,7 +181,7 @@ const Index = (props) => {
             <span style={{ fontWeight: "bold", marginRight: "8px" }}>
               Editando:
             </span>
-            <a href={viewUrl} target="_blank">
+            <a href={viewUrl} target="_blank" rel="noreferrer">
               {viewUrl}
             </a>
           </div>
