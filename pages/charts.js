@@ -44,24 +44,39 @@ export async function getServerSideProps(context) {
       Authorization: "Bearer " + token.data.data.token,
     },
   };
-  const latestFilesReq = await axios.get(
-    "https://azimuthim.com/wp-json/wp/v2/media?media_type=text&per_page=50",
-    config
-  );
-  const media = latestFilesReq.data;
-  const monthlyFiles = media.filter((x) => x.slug.includes("monthly"));
-  let monthlyFile;
-  if (monthlyFiles.length > 0) {
-    const monthlyFileReq = await axios.get(monthlyFiles[0].source_url, config);
-    monthlyFile = monthlyFileReq.data;
-  }
+  try {
+    async function getLatestFiles(page) {
+      console.log("runnning function");
+      const latestFilesReq = await axios.get(
+        `https://azimuthim.com/wp-json/wp/v2/media?media_type=text&per_page=25&page=${page}`,
+        config
+      );
+      const media = latestFilesReq.data;
+      let monthlyFiles = media.filter((x) => x.slug.includes("monthly"));
+      let monthlyFile;
+      if (monthlyFiles.length > 0) {
+        const monthlyFileReq = await axios.get(
+          monthlyFiles[0].source_url,
+          config
+        );
+        monthlyFile = monthlyFileReq.data;
+      }
+      if (!monthlyFile) {
+        return getLatestFiles(page + 1);
+      }
+      return monthlyFile;
+    }
 
-  return {
-    props: {
-      ok: true,
-      name: context.query.chart,
-      token: token.data.data.token,
-      monthlyFile: monthlyFile,
-    },
-  };
+    const monthlyFile = await getLatestFiles(1);
+    return {
+      props: {
+        ok: true,
+        name: context.query.chart,
+        token: token.data.data.token,
+        monthlyFile: monthlyFile,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }

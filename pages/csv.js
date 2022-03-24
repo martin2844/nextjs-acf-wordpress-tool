@@ -33,6 +33,8 @@ const Csv = ({ data, token, label, updateUrl }) => {
       "archivos_hypothetical-10k-growth",
       "archivos_nav-price-evolution",
       "archivos_portfolio-credit-quality",
+      "archivos_portfolio-country",
+      "archivos_portfolio-industry",
     ];
     const pagesThatNeedDeleteBtn = ["archivos_portfolio-credit-quality"];
     if (pagesThatNeedAddRow.includes(label)) {
@@ -43,8 +45,8 @@ const Csv = ({ data, token, label, updateUrl }) => {
     }
   }, []);
 
-  console.log("CSVDATA:", csvData);
-  console.log("CSVSTRING:", csvString);
+  // console.log("CSVDATA:", csvData);
+  // console.log("CSVSTRING:", csvString);
 
   const removeRow = (rowNum) => {
     const arrData = csvData.filter((row, i) => {
@@ -115,11 +117,22 @@ const Csv = ({ data, token, label, updateUrl }) => {
         Authorization: "Bearer " + token,
       },
     };
+    console.log("%cABOUT TO:", "font-size: 20px; color: blue;");
+    console.log("%c1) Upload csv file", "color: brown;");
+    console.log("%c2) Relate file to WP page", "color: brown;");
     axios
       .post(`https://azimuthim.com/wp-json/wp/v2/media`, formData, config)
       .then((x) => {
         //Success Uploading
-        console.log("New File Id:", x.data.id);
+        console.log(
+          "%cDEBUG:" + "%c Success at 1) uploading FILE to WPR",
+          "background: black; color: limegreen",
+          "background: white; color: blue"
+        );
+        console.log(
+          "New File Id: " + x.data.id,
+          "background: black; color: limegreen"
+        );
         setSaving(false);
         axios
           .post(
@@ -135,13 +148,24 @@ const Csv = ({ data, token, label, updateUrl }) => {
           )
           .then((x) => {
             //Success reposting new data
+            console.log(
+              "%c DEBUG:" + "%c Success at 2) relating file to webpage",
+              "background: black; color: limegreen",
+              "background: white; color: blue"
+            );
             console.log(x);
             setSuccess(true);
             setSaving(false);
           })
-          .catch((x) => console.log(x));
+          .catch((x) => {
+            console.error("ERROR AT RELATING DATA");
+            console.log(x);
+          });
       })
-      .catch((x) => console.log(x));
+      .catch((x) => {
+        console.error("ERROR AT POSTING DATA");
+        console.log(x);
+      });
   };
 
   const addNewRow = () => {
@@ -160,6 +184,27 @@ const Csv = ({ data, token, label, updateUrl }) => {
       </span>
     </div>
   );
+
+  if (data === "nopassword") {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        <Text h1 size={60} color="error" weight="bold">
+          contraseña incorrecta
+        </Text>
+        <Button onClick={() => router.push("/")} shadow color="primary" auto>
+          Volver
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.main}>
@@ -210,7 +255,11 @@ export async function getServerSideProps(context) {
   console.log(process.env.localPass);
   console.log(context.query.pass);
   if (context.query.pass !== process.env.localPass) {
-    throw new Error("WRONG PASSWORD");
+    return {
+      props: {
+        data: "nopassword",
+      },
+    };
   }
   const csvString = await axios.get(context.query.file);
   const token = await axios.post(

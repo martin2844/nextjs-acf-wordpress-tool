@@ -25,7 +25,6 @@ const Index = (props) => {
   const [rawData, setRawData] = useState(props);
 
   useEffect(() => {
-    // console.log(production);
     if (production) {
       switch (pageSelected) {
         case "home":
@@ -39,9 +38,11 @@ const Index = (props) => {
         case "homeSP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/477");
           setViewUrl("https://azimuthim.com/es/");
+          break;
         case "homeASP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/127");
-          setViewUrl("https://azimuthim.com/a-2/");
+          setViewUrl("https://azimuthim.com/es/a-2/");
+          break;
         default:
           break;
       }
@@ -58,14 +59,18 @@ const Index = (props) => {
         case "homeSP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/123");
           setViewUrl("https://azimuthim.com/es/pagina-principal/");
+          break;
         case "homeASP":
           setUpdateUrl("https://azimuthim.com/wp-json/acf/v3/pages/478");
           setViewUrl("https://azimuthim.com/a-copia-esp/");
+          break;
         default:
           break;
       }
     }
   }, [production, pageSelected]);
+
+  console.log(pageSelected, viewUrl);
 
   useEffect(() => {
     console.log("FETCHING DATA");

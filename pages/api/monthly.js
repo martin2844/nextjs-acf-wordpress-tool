@@ -23,33 +23,28 @@ function runMiddleware(req, res, fn) {
 export default async function handler(req, res) {
   await runMiddleware(req, res, cors);
   try {
-    const token = await axios.post(
-      "https://azimuthim.com/wp-json/jwt-auth/v1/token",
-      {
-        username: process.env.USER,
-        password: process.env.PASS,
-      }
-    );
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token.data.data.token,
-      },
-    };
-    const latestFilesReq = await axios.get(
-      "https://azimuthim.com/wp-json/wp/v2/media?media_type=text&per_page=50",
-      config
-    );
-    const media = latestFilesReq.data;
-    const monthlyFiles = media.filter((x) => x.slug.includes("monthly"));
-    let monthlyFile;
-    if (monthlyFiles.length > 0) {
-      const monthlyFileReq = await axios.get(
-        monthlyFiles[0].source_url,
+    async function getLatestFiles(page) {
+      console.log("runnning function");
+      const latestFilesReq = await axios.get(
+        `https://azimuthim.com/wp-json/wp/v2/media?media_type=text&per_page=25&page=${page}`,
         config
       );
-      monthlyFile = monthlyFileReq.data;
+      const media = latestFilesReq.data;
+      let monthlyFiles = media.filter((x) => x.slug.includes("monthly"));
+      let monthlyFile;
+      if (monthlyFiles.length > 0) {
+        const monthlyFileReq = await axios.get(
+          monthlyFiles[0].source_url,
+          config
+        );
+        monthlyFile = monthlyFileReq.data;
+      }
+      if (!monthlyFile) {
+        return getLatestFiles(page + 1);
+      }
+      return monthlyFile;
     }
+    const monthlyFile = await getLatestFiles(1);
     res.status(200).json(monthlyFile);
   } catch (error) {
     res.status(500).send(error);

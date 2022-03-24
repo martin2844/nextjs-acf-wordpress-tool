@@ -15,7 +15,10 @@ const Monthly = ({ token, file }) => {
   useEffect(() => {
     //On first load first search for all files and check if there is a monthly file available.
     if (file) {
-      console.log("@@@@@@@@ FILE LOADED OK @@@@@@@@@");
+      console.log(
+        "%c@@@@@@@@ FILE LOADED OK @@@@@@@@@",
+        "background: black; color: limegreen"
+      );
       setLastMonths(file);
     } else {
       console.log("@@@@@@@@ No file loaded @@@@@@@@@");
