@@ -4,11 +4,13 @@ import styles from "../styles/month.module.css";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { Loading, Button } from "@nextui-org/react";
+import { readString, jsonToCSV } from "react-papaparse";
 
 const Monthly = ({ token, file }) => {
   const [lastMonths, setLastMonths] = useState([]);
   const [stringifiedMonths, setStringifiedMonths] = useState("");
   const [saving, setSaving] = useState(false);
+  const [csvString, setCSVString] = useState("");
   const [saved, setSaved] = useState(false);
   const today = dayjs(new Date());
   const router = useRouter();
@@ -19,10 +21,20 @@ const Monthly = ({ token, file }) => {
         "%c@@@@@@@@ FILE LOADED OK @@@@@@@@@",
         "background: black; color: limegreen"
       );
-      setLastMonths(file);
+
+      if (typeof file === "string") {
+        readString(file, {
+          worker: true,
+          complete: (results) => {
+            setLastMonths(results.data);
+            setCSVString(jsonToCSV(JSON.stringify(results.data)));
+          },
+        });
+      } else {
+        setLastMonths(file);
+      }
     } else {
-      console.log("@@@@@@@@ No file loaded @@@@@@@@@");
-      console.log("TOKEN: ", token);
+      console.error("@@@@@@@@ No file loaded @@@@@@@@@");
       const last12Months = [];
       for (let i = 0; i < 12; i++) {
         let dateToPush = dayjs(today).subtract(i, "month");
@@ -39,16 +51,15 @@ const Monthly = ({ token, file }) => {
     const latestMonthInArr = dayjs("01" + newMonths[0][0]);
     newMonths.unshift([latestMonthInArr.add(1, "month").format("MMM-YY"), "0"]);
     setLastMonths(newMonths);
+    setStringifiedMonths(JSON.stringify(newMonths));
   };
-
-  console.log(lastMonths);
 
   let csvTable;
   //Create a MATRIX in order to modify the values
   //First array determines the amount of rows
   //Second Array, any determines the amount of cols.
   if (lastMonths) {
-    csvTable = lastMonths.map((csArray, i) => {
+    csvTable = lastMonths?.map((csArray, i) => {
       const y = i;
       return (
         <div className={styles.inputContainer} key={JSON.stringify(y)}>
@@ -76,19 +87,22 @@ const Monthly = ({ token, file }) => {
     newData[y][x] = e.target.value;
     setLastMonths(newData);
     setStringifiedMonths(JSON.stringify(newData));
+    setCSVString(jsonToCSV(JSON.stringify(newData)));
   };
 
   const exportCsv = () => {
     setSaving(true);
     const date = dayjs(Date.now()).format("DD-MM-YY--HHmm");
     const formData = new FormData();
-    const myCsvData = new Blob([stringifiedMonths], { type: "text/csv" });
+    const myCsvData = new Blob([csvString], { type: "text/csv" });
     formData.append("file", myCsvData, `MONTHLY-${date}.csv`);
+
     let config = {
       headers: {
         Authorization: "Bearer " + token,
       },
     };
+
     axios
       .post(`https://azimuthim.com/wp-json/wp/v2/media`, formData, config)
       .then((x) => {
@@ -145,6 +159,7 @@ const Monthly = ({ token, file }) => {
             shadow
             color="secondary"
             auto
+            disabled={!csvString}
           >
             Guardar
           </Button>

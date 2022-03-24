@@ -22,9 +22,22 @@ function runMiddleware(req, res, fn) {
 
 export default async function handler(req, res) {
   await runMiddleware(req, res, cors);
+
   try {
+    const token = await axios.post(
+      "https://azimuthim.com/wp-json/jwt-auth/v1/token",
+      {
+        username: process.env.USER,
+        password: process.env.PASS,
+      }
+    );
+
+    let config = {
+      headers: {
+        Authorization: "Bearer " + token.data.data.token,
+      },
+    };
     async function getLatestFiles(page) {
-      console.log("runnning function");
       const latestFilesReq = await axios.get(
         `https://azimuthim.com/wp-json/wp/v2/media?media_type=text&per_page=25&page=${page}`,
         config
@@ -42,9 +55,11 @@ export default async function handler(req, res) {
       if (!monthlyFile) {
         return getLatestFiles(page + 1);
       }
+      console.log("finished monthly function");
       return monthlyFile;
     }
     const monthlyFile = await getLatestFiles(1);
+    console.log(monthlyFile);
     res.status(200).json(monthlyFile);
   } catch (error) {
     res.status(500).send(error);

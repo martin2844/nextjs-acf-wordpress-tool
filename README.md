@@ -9,3 +9,6 @@ So instead of fixing the complicated wordpress done by other people, I used my k
 reads his current csv files, displays them on a page and allows him to edit those files, without the ability of adding new rows.
 And after he is done he can save the file and upload it directly to wordrpess.
 
+## API
+
+The site fetches the monthly data from this endpoint: /api/monthly
