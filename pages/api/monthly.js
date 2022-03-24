@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import axios from "axios";
 import Cors from "cors";
+import { readString } from "react-papaparse";
 
 const cors = Cors({
   methods: ["GET", "HEAD"],
@@ -59,8 +60,13 @@ export default async function handler(req, res) {
       return monthlyFile;
     }
     const monthlyFile = await getLatestFiles(1);
-    console.log(monthlyFile);
-    res.status(200).json(monthlyFile);
+
+    readString(monthlyFile, {
+      worker: true,
+      complete: (results) => {
+        res.status(200).json(results.data);
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
   }
